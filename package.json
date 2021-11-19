@@ -1,0 +1,68 @@
+{
+  "name": "ad-aws-login-electron",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./build/src/main/main.js",
+  "build": {
+    "appId": "fi.jokinenk.ad-aws-login-electron",
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "build/**/*",
+      "package.json"
+    ]
+  },
+  "scripts": {
+    "clean": "rimraf build",
+    "build": "webpack",
+    "launch": "electron .",
+    "test": "jest",
+    "start": "cross-env NODE_ENV=production run-s clean build launch",
+    "start:dev": "cross-env NODE_ENV=development concurrently -k -s first \"webpack serve\" \"run-s clean wait launch\"",
+    "wait": "wait-on ./build/src/main/main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Kalle Jokinen",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "@types/nconf": "^0.10.1",
+    "@types/node": "^16.11.7",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
+    "@types/xml2js": "^0.4.9",
+    "concurrently": "^6.4.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "electron": "^16.0.0",
+    "electron-builder": "^22.13.1",
+    "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.3.1",
+    "mini-css-extract-plugin": "^2.4.4",
+    "npm": "^8.1.3",
+    "npm-run-all": "^4.1.5",
+    "react-hot-loader": "^4.13.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.4",
+    "wait-on": "^6.0.0",
+    "webpack": "^5.64.1",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.5.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1031.0",
+    "nconf": "^0.11.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "xml2js": "^0.4.23"
+  }
+}
