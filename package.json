@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "./build/src/main/main.js",
+  "types": "./build/src/main/main.d.ts",
   "build": {
     "appId": "fi.jokinenk.ad-aws-login-electron",
     "mac": {
@@ -23,9 +24,10 @@
     "clean": "rimraf build",
     "build": "webpack",
     "launch": "electron .",
+    "watch": "nodemon --watch build/src/main --delay 1 --exec \"electron .\"",
     "test": "jest",
     "start": "cross-env NODE_ENV=production run-s clean build launch",
-    "start:dev": "cross-env NODE_ENV=development concurrently -k -s first \"webpack serve\" \"run-s clean wait launch\"",
+    "start:dev": "cross-env NODE_ENV=development concurrently -k -s first \"webpack serve\" \"run-s clean wait watch\"",
     "wait": "wait-on ./build/src/main/main.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -61,6 +63,7 @@
   "dependencies": {
     "aws-sdk": "^2.1031.0",
     "nconf": "^0.11.3",
+    "nodemon": "^2.0.15",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "xml2js": "^0.4.23"
