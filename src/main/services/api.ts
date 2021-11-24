@@ -12,13 +12,13 @@ import { IpcPortMain } from '@main/ipc-port-main';
 
 export class Api {
   constructor(port: IpcPortMain) {
-    assignRequestHandler(port, ChannelName.GET_CONFIG, this.getConfig);
+    assignRequestHandler(port, ChannelName.GET_CONFIG, this.getConfigHandler);
     assignRequestHandler(port, ChannelName.SET_CONFIG, this.setConfigHandler);
     assignRequestHandler(port, ChannelName.GET_PROFILES, this.getProfilesHandler);
     port.start();
   }
 
-  getConfig: GetConfigHandler = (request) => {
+  getConfigHandler: GetConfigHandler = (request) => {
     return { data: config.get(request.key) };
   };
 
