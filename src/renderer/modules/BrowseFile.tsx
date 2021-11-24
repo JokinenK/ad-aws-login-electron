@@ -1,29 +1,34 @@
 import * as React from 'react';
+import { default as api } from '../api-instance';
+import * as path from 'path-browserify';
 
 export type BrowseFileProps = Omit<
-  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 
-  'ref'
+  React.HTMLAttributes<any>,
+  'value' |
+  'onChange'
 > & {
-  ref?: React.RefObject<HTMLInputElement>;
   label?: string;
-}
+  value?: string[];
+  onChange: (filePaths: string[]) => void;
+};
 
 export const BrowseFile = (props: BrowseFileProps) => {
   const {
-    ref,
     value = [],
     label = "Browse",
     onChange,
     ...rest
   } = props;
 
-  const btnRef = ref || React.createRef<HTMLInputElement>();
-  const inputRef = React.createRef<HTMLInputElement>();
+  const handleFileBrowse = () => {
+    api.showOpenDialog({
+      defaultPath: value.length
+        ? path.dirname(value[0])
+        : undefined,
+    }).then(({ canceled, filePaths }) => {
+      if (!canceled) { onChange(filePaths); }
+    });
+  }
 
-  return (
-    <>
-      <input {...rest} ref={btnRef} type="button" onClick={() => inputRef.current?.click()} value={label} />
-      <input type="file" ref={inputRef} style={{ display: 'none' }} onChange={onChange} />
-    </>
-  );
+  return (<input {...rest} type="button" onClick={() => handleFileBrowse()} value={label} />);
 };

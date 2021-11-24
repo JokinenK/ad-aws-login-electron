@@ -1,9 +1,12 @@
 import { RequestHandler, RequestInvoker } from "@common/ipc";
+import { OpenDialogOptions, OpenDialogReturnValue, SaveDialogOptions, SaveDialogReturnValue } from "electron";
 
 export enum ChannelName {
   GET_CONFIG = 'GET_CONFIG',
   SET_CONFIG = 'SET_CONFIG',
   GET_PROFILES = 'GET_PROFILES',
+  OPEN_DIALOG = 'OPEN_DIALOG',
+  SAVE_DIALOG = 'SAVE_DIALOG'
 };
 
 export interface GetConfigRequest {
@@ -42,3 +45,8 @@ export interface GetProfilesResponse {
 export type GetProfilesHandler = RequestHandler<GetProfilesRequest, GetProfilesResponse>;
 export type GetProfilesInvoker = RequestInvoker<GetProfilesRequest, GetProfilesResponse>;
 
+export type OpenDialogHandler = RequestHandler<OpenDialogOptions, OpenDialogReturnValue>;
+export type OpenDialogInvoker = RequestInvoker<OpenDialogOptions, OpenDialogReturnValue>;
+
+export type SaveDialogHandler = RequestHandler<SaveDialogOptions, SaveDialogReturnValue>;
+export type SaveDialogInvoker = RequestInvoker<SaveDialogOptions, SaveDialogReturnValue>;

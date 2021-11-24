@@ -41,19 +41,19 @@ export const AwsSettings = () => {
     return null;
   }
 
-  const onConfigPathChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const file = evt.target.files?.item(0);
+  const onConfigPathChange = (filePaths: string[]) => {
+    const file = filePaths[0];
 
     if (isDefined(file)) {
-      setConfigPath(file.path);
+      setConfigPath(file);
     }
   }
 
-  const onCredentialsPathChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const file = evt.target.files?.item(0);
+  const onCredentialsPathChange = (filePaths: string[]) => {
+    const file = filePaths[0];
 
     if (isDefined(file)) {
-      setCredentialsPath(file.path);
+      setCredentialsPath(file);
     }
   }
 
