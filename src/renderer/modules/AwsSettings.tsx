@@ -4,7 +4,7 @@ import { ConfigKey } from '@common/types';
 import { isDefined } from '@common/helpers';
 import { useConfig } from '@renderer/effects/config';
 import { usePromise } from '@renderer/effects/promise';
-import api from '@renderer/services/api';
+import { default as api } from '@renderer/api-instance';
 
 export const AwsSettings = () => {
   const [

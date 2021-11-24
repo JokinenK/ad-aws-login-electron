@@ -1,7 +1,7 @@
-import { app, session, BrowserWindow } from 'electron'
+import { app, session, BrowserWindow, ipcMain } from 'electron'
+import { createApiInstance } from './api-instance';
 import { isOSX, isDevelopment, getIndexUrl } from './helpers';
 import { interceptSamlLogin } from './intercept-saml-login';
-import './services/api';
 
 const isDev = isDevelopment();
 const defaultWidth = 600;
@@ -26,6 +26,10 @@ const createWindow = (width: number, height: number) => {
     webContents.openDevTools();
   } 
   
+  ipcMain.on('request-api', async (event) => {
+    createApiInstance(event.ports[0]);
+  })
+
   webContents.setWindowOpenHandler((details) => {
     mainWindow.loadURL(details.url);
     return { action: 'deny' };

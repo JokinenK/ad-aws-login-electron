@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { default as api } from "@renderer/services/api"
+import { default as api } from "@renderer/api-instance"
 
 type HookType = [
   string | undefined, 

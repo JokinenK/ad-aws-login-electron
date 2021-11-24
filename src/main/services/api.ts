@@ -1,4 +1,3 @@
-import { ipcMain } from 'electron';
 import { default as config } from '@main/config-instance';
 import { parseProfiles } from '@main/aws-helper';
 import { assignRequestHandler } from '@common/ipc';
@@ -9,12 +8,14 @@ import {
   SetConfigHandler,
   GetProfilesHandler,
 } from '@common/types'
+import { IpcPortMain } from '@main/ipc-port-main';
 
-class Api {
-  constructor() {
-    assignRequestHandler(ipcMain, ChannelName.GET_CONFIG, this.getConfig);
-    assignRequestHandler(ipcMain, ChannelName.SET_CONFIG, this.setConfigHandler);
-    assignRequestHandler(ipcMain, ChannelName.GET_PROFILES, this.getProfilesHandler);
+export class Api {
+  constructor(port: IpcPortMain) {
+    assignRequestHandler(port, ChannelName.GET_CONFIG, this.getConfig);
+    assignRequestHandler(port, ChannelName.SET_CONFIG, this.setConfigHandler);
+    assignRequestHandler(port, ChannelName.GET_PROFILES, this.getProfilesHandler);
+    port.start();
   }
 
   getConfig: GetConfigHandler = (request) => {
@@ -31,4 +32,3 @@ class Api {
   };
 }
 
-export default new Api();
