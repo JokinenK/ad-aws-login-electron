@@ -55,14 +55,6 @@ module.exports = [{
     path: path.resolve(__dirname, './build/src/renderer'),
     filename: 'index.js',
   },
-  devServer: {
-    port: 3000,
-    open: false,
-    hot: true,
-    devMiddleware: {
-      writeToDisk: true,
-    },
-  },
   plugins: [
     new HtmlWebpackPlugin({ template: './src/renderer/index.html' }),
     new MiniCssExtractPlugin(),

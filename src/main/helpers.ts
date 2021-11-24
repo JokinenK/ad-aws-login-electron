@@ -40,7 +40,5 @@ export const getConfigPath = (): string => {
 }
 
 export const getIndexUrl = (): string => {
-  return isDevelopment()
-    ? 'http://localhost:3000'
-    : `file://${parseBuildFile('src/renderer/index.html')}`;
+  return `file://${parseBuildFile('src/renderer/index.html')}`;
 }
