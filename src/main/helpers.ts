@@ -39,6 +39,8 @@ export const getConfigPath = (): string => {
   return path.resolve(String(HOME), `.${appName}`);
 }
 
-export const getIndexUrl = (): string => {
-  return `file://${parseBuildFile('src/renderer/index.html')}`;
+export const getRouteUrl = (route: string): string => {
+  const path = `file://${parseBuildFile('src/renderer/index.html')}#${route}`;
+  console.log(path);
+  return path;
 }

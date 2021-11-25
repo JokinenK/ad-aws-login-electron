@@ -2,7 +2,7 @@ import * as React from 'react';
 import { default as api } from '../api-instance';
 import * as path from 'path-browserify';
 
-export type BrowseFileProps = Omit<
+export type FileBrowsereProps = Omit<
   React.HTMLAttributes<any>,
   'value' |
   'onChange'
@@ -12,7 +12,7 @@ export type BrowseFileProps = Omit<
   onChange: (filePaths: string[]) => void;
 };
 
-export const BrowseFile = (props: BrowseFileProps) => {
+export const FileBrowser = (props: FileBrowsereProps) => {
   const {
     value = [],
     label = "Browse",

@@ -8,7 +8,7 @@ import {
 
 import { ConfigKey } from '@common/types';
 import { parseStringPromise } from 'xml2js';
-import { getIndexUrl } from './helpers';
+import { getRouteUrl } from './helpers';
 import { SAMPResponse } from './types';
 import { updateCredentials } from './aws-helper';
 import { default as config } from './config-instance';
@@ -27,7 +27,7 @@ export const interceptSamlLogin = (window: BrowserWindow, session: Session) => {
 
       if (response) {
         handleSamlLogin(response);
-        window.loadURL(getIndexUrl());
+        window.loadURL(getRouteUrl('/success'));
         return callback({ cancel: true });
       }
     }

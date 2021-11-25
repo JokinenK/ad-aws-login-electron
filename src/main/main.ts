@@ -1,6 +1,6 @@
 import { app, session, BrowserWindow, ipcMain } from 'electron'
 import { createApiInstance } from './api-instance';
-import { isOSX, isDevelopment, getIndexUrl } from './helpers';
+import { isOSX, isDevelopment, getRouteUrl } from './helpers';
 import { interceptSamlLogin } from './intercept-saml-login';
 
 const isDev = isDevelopment();
@@ -35,7 +35,7 @@ const createWindow = (width: number, height: number) => {
     return { action: 'deny' };
   });
 
-  mainWindow.loadURL(getIndexUrl());
+  mainWindow.loadURL(getRouteUrl('/'));
   interceptSamlLogin(mainWindow, session.defaultSession);
 }
 

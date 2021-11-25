@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import { BrowseFile } from './BrowseFile';
+import { FileBrowser } from '@renderer/components/FileBrowser';
 import { ConfigKey } from '@common/types';
 import { isDefined } from '@common/helpers';
 import { useConfig } from '@renderer/effects/config';
@@ -8,7 +8,7 @@ import { usePromise } from '@renderer/effects/promise';
 import { default as api } from '@renderer/api-instance';
 import { useCountdown } from '@renderer/effects/countdown';
 
-export const AwsSettings = () => {
+export const MainPage = () => {
   const [
     configPath,
     getConfigPath,
@@ -51,7 +51,8 @@ export const AwsSettings = () => {
     return null;
   }
 
-  const tokenExpiresString = moment().startOf('day')
+  const tokenExpiresString = moment()
+    .startOf('day')
     .seconds(tokenExpiresIn)
     .format('hh:mm:ss');
 
@@ -83,14 +84,14 @@ export const AwsSettings = () => {
           <td className="key">Config file:</td>
           <td className="value">{configPath}</td>
           <td className="modify">
-            <BrowseFile className="browse" onChange={onConfigPathChange} />
+            <FileBrowser className="browse" onChange={onConfigPathChange} />
           </td>
         </tr>
         <tr className="row">
           <td className="key">Credentials file:</td>
           <td className="value">{credentialsPath}</td>
           <td className="modify">
-            <BrowseFile className="browse" onChange={onCredentialsPathChange} />
+            <FileBrowser className="browse" onChange={onCredentialsPathChange} />
           </td>
         </tr>
         <tr className="row">
