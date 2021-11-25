@@ -12,7 +12,10 @@ function App() {
         <Routes>
           <Route path="/home" element={<MainPage />} />
           <Route path="/success" element={<SuccessPage />} />
-          <Route path="/failure" element={<FailurePage errorMessage={'Damn'}/>} />
+          <Route path="/failure">
+            <Route path=":errorMessage" element={<FailurePage />} />
+            <Route path="" element={<FailurePage />} />
+          </Route>
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
       </HashRouter>

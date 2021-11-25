@@ -1,4 +1,3 @@
-import * as moment from 'moment';
 import * as STS from 'aws-sdk/clients/sts';
 import {
   Session,
@@ -8,7 +7,7 @@ import {
 
 import { ConfigKey } from '@common/types';
 import { parseStringPromise } from 'xml2js';
-import { getRouteUrl } from './helpers';
+import { getRouteUrl, serializeError } from './helpers';
 import { SAMPResponse } from './types';
 import { updateCredentials } from './aws-helper';
 import { default as config } from './config-instance';
@@ -18,7 +17,7 @@ export const interceptSamlLogin = (window: BrowserWindow, session: Session) => {
   const { webRequest } = session;
   const filter: WebRequestFilter = { urls: ['https://signin.aws.amazon.com/saml'] }
 
-  webRequest.onBeforeRequest(filter, (details, callback) => {
+  webRequest.onBeforeRequest(filter, async (details, callback) => {
     const [uploadData] = details.uploadData;
 
     if (details.method == 'POST' && uploadData) {
@@ -26,8 +25,17 @@ export const interceptSamlLogin = (window: BrowserWindow, session: Session) => {
       const response = payload.get('SAMLResponse')
 
       if (response) {
-        handleSamlLogin(response);
-        window.loadURL(getRouteUrl('/success'));
+        try {
+          const credentials = await extractSamlCredentials(response);
+          const credentialsFile = config.get(ConfigKey.AWS_CREDENTIALS_PATH);
+          const profile = config.get(ConfigKey.AWS_PROFILE);
+          updateCredentials(credentialsFile, profile, credentials);
+          window.loadURL(getRouteUrl('/success'));
+        } catch (error) {
+          const errorMessage = Buffer.from(serializeError(error)).toString('base64');
+          window.loadURL(getRouteUrl(`/failure/${errorMessage}`));
+        }
+        
         return callback({ cancel: true });
       }
     }
@@ -36,7 +44,7 @@ export const interceptSamlLogin = (window: BrowserWindow, session: Session) => {
   });
 }
 
-const handleSamlLogin = (samlResponse: string): Promise<void> => {
+const extractSamlCredentials = (samlResponse: string): Promise<STS.Credentials> => {
   return new Promise(async (resolve, reject) => {
     const buffer = Buffer.from(samlResponse, 'base64');
     const result = await parseStringPromise(buffer.toString());
@@ -82,12 +90,7 @@ const handleSamlLogin = (samlResponse: string): Promise<void> => {
         return reject(new Error('Response does not contain credentials'));
       }
       
-      const credentialsFile = config.get(ConfigKey.AWS_CREDENTIALS_PATH);
-      const profile = config.get(ConfigKey.AWS_PROFILE);
-
-      updateCredentials(credentialsFile, profile, Credentials);
-
-      return resolve();
+      return resolve(Credentials);
     });
   });
 }

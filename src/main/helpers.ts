@@ -39,6 +39,26 @@ export const getConfigPath = (): string => {
   return path.resolve(String(HOME), `.${appName}`);
 }
 
+export const isError = (input?: any): input is Error => {
+  return (input && input.stack && input.message);
+}
+
+export const isString = (input?: any): input is string => {
+  return (typeof input === 'string');
+}
+
+export const serializeError = (input?: any): string => {
+  if (isError(input)) {
+    return input.message;
+  }
+  
+  if (isString(input)) {
+    return input;
+  }
+
+  return JSON.stringify(input);
+}
+
 export const getRouteUrl = (route: string): string => {
   const path = `file://${parseBuildFile('src/renderer/index.html')}#${route}`;
   console.log(path);
