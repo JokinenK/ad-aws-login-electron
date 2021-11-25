@@ -1,10 +1,12 @@
 import * as React from 'react';
+import * as moment from 'moment';
 import { BrowseFile } from './BrowseFile';
 import { ConfigKey } from '@common/types';
 import { isDefined } from '@common/helpers';
 import { useConfig } from '@renderer/effects/config';
 import { usePromise } from '@renderer/effects/promise';
 import { default as api } from '@renderer/api-instance';
+import { useCountdown } from '@renderer/effects/countdown';
 
 export const AwsSettings = () => {
   const [
@@ -30,16 +32,28 @@ export const AwsSettings = () => {
     getListAwsProfiles
   ] = usePromise(() => api.getProfiles());
 
+  const [
+    tokenExpires,
+    getTokenExpires,
+  ] = useConfig(ConfigKey.TOKEN_EXPIRES);
+
   React.useEffect(() => {
     getConfigPath();
     getCredentialsPath();
     getAwsProfile();
     getListAwsProfiles();
+    getTokenExpires();
   }, [configPath]);
 
-  if (!configPath || !credentialsPath || !awsProfile || !listAwsProfiles) {
+  const tokenExpiresIn = useCountdown(tokenExpires);
+
+  if (!configPath || !credentialsPath || !awsProfile || !listAwsProfiles || !tokenExpires) {
     return null;
   }
+
+  const tokenExpiresString = moment().startOf('day')
+    .seconds(tokenExpiresIn)
+    .format('hh:mm:ss');
 
   const onConfigPathChange = (filePaths: string[]) => {
     const file = filePaths[0];
@@ -85,6 +99,11 @@ export const AwsSettings = () => {
             <select id="selectProfile" onChange={onProfileChange} value={awsProfile}>
               {listAwsProfiles.map(profile => <option key={profile} value={profile}>{profile}</option>)}
             </select>
+          </td>
+        </tr>
+        <tr className="row">
+          <td className="value" colSpan={3}>
+            Token expires in {tokenExpiresString}
           </td>
         </tr>
         <tr className="row">

@@ -1,9 +1,8 @@
+import * as moment from 'moment';
 import * as STS from 'aws-sdk/clients/sts';
 import {
   Session,
   WebRequestFilter,
-  OnBeforeRequestListenerDetails,
-  Response,
   BrowserWindow
 } from 'electron';
 
@@ -65,22 +64,31 @@ const handleSamlLogin = (samlResponse: string): Promise<void> => {
     const sts = new STS();
     const roleArn = listArns[0][0];
     const principalArn = listArns[0][1];
+    const duration = Number(config.get(ConfigKey.TOKEN_DURATION));
 
     const assumeRoleRequest: STS.AssumeRoleWithSAMLRequest = {
       RoleArn: roleArn,
       PrincipalArn: principalArn,
       SAMLAssertion: samlResponse,
+      DurationSeconds: duration,
     }
 
-    sts.assumeRoleWithSAML(assumeRoleRequest, (err, response) => {
+    sts.assumeRoleWithSAML(assumeRoleRequest, (err, { Credentials }) => {
       if (err) {
         return reject(err);
       }
 
+      if (!Credentials) {
+        return reject(new Error('Response does not contain credentials'));
+      }
+      
+      const expires = moment(Credentials.Expiration); 
       const credentialsFile = config.get(ConfigKey.AWS_CREDENTIALS_PATH);
       const profile = config.get(ConfigKey.AWS_PROFILE);
 
-      updateCredentials(credentialsFile, profile, response.Credentials!);
+      config.set(ConfigKey.TOKEN_EXPIRES, expires.toISOString());
+      updateCredentials(credentialsFile, profile, Credentials);
+
       return resolve();
     });
   });

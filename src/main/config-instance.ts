@@ -3,6 +3,7 @@ import { ConfigKey } from '@common/types';
 import { Config } from "@main/services/config";
 import { default as exitHandler } from '@main/services/exit-handler';
 import { getHomePath, getConfigPath } from '@main/helpers';
+import moment = require('moment');
 
 const defaultConfigPath = path.join(getHomePath(), '.aws', 'config');
 const defaultCredentialsPath = path.join(getHomePath(), '.aws', 'credentials');
@@ -16,6 +17,8 @@ const configInstance = new Config({
     [ConfigKey.AWS_CREDENTIALS_PATH]: defaultCredentialsPath,
     [ConfigKey.AWS_PROFILE]: defaultProfile,
     [ConfigKey.NODE_ENV]: defaultNodeEnv,
+    [ConfigKey.TOKEN_DURATION]: `${(8 * 60 * 60)}`,
+    [ConfigKey.TOKEN_EXPIRES]: moment(0).toISOString(),
   }
 });
 
