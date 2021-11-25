@@ -1,9 +1,13 @@
 import * as fs from 'fs';
 import * as STS from 'aws-sdk/clients/sts';
+import * as moment from 'moment';
+import { parseIni } from '@common/helpers';
+
+const emptyDate = moment(0).toISOString();
+const extractProfilesRegExp = new RegExp('\\[profile (.*)\\]');
+const createExtractCredentialsRegExp = (profile: string) => new RegExp(`\\[${profile}\\]\\r?\\n([^\\[]+)`);
 
 export const parseProfiles = (configFile: string): string[] => {
-  const regExp = new RegExp('\\[profile (.*)\\]');
-
   if (!fs.existsSync(configFile)) {
     return [];
   }
@@ -12,12 +16,47 @@ export const parseProfiles = (configFile: string): string[] => {
     .readFileSync(configFile)
     .toString()
     .split(/\r?\n/)
-    .filter(it => regExp.test(it))
-    .map(it => it.replace(regExp, '$1'));
+    .filter(it => extractProfilesRegExp.test(it))
+    .map(it => it.replace(extractProfilesRegExp, '$1'));
+}
+
+export const parseCredentials = (credentialsFile: string, profile: string): STS.Credentials | undefined => {
+  const regExp = createExtractCredentialsRegExp(profile);
+  
+  if (!fs.existsSync(credentialsFile)) {
+    return undefined;
+  }
+
+  const contents = fs.readFileSync(credentialsFile).toString();
+  const matches = contents.match(regExp);
+
+  if (matches) {
+    const config = parseIni(matches[1]);
+    const credentials: STS.Credentials = {
+      AccessKeyId: config['aws_access_key_id'],
+      SecretAccessKey: config['aws_secret_access_key'],
+      SessionToken: config['aws_session_token'],
+      Expiration: new Date(config['aws_session_expiration']),
+    }
+
+    return credentials;
+  }
+
+  return undefined;
+}
+
+export const parseTokenExpiration = (credentialsFile: string, profile: string): string => {
+  const credentials = parseCredentials(credentialsFile, profile);
+
+  if (credentials) {
+    return moment(credentials.Expiration).toISOString();
+  }
+
+  return emptyDate;
 }
 
 export const updateCredentials = (credentialsFile: string, profile: string, credentials: STS.Credentials) => {
-  const regExp = new RegExp(`\\[${profile}\\]\\r?\\n([^\\[]+)`);
+  const regExp = createExtractCredentialsRegExp(profile);
   const fileExists = fs.existsSync(credentialsFile);
 
   const contents = fileExists

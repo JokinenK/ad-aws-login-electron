@@ -82,11 +82,9 @@ const handleSamlLogin = (samlResponse: string): Promise<void> => {
         return reject(new Error('Response does not contain credentials'));
       }
       
-      const expires = moment(Credentials.Expiration); 
       const credentialsFile = config.get(ConfigKey.AWS_CREDENTIALS_PATH);
       const profile = config.get(ConfigKey.AWS_PROFILE);
 
-      config.set(ConfigKey.TOKEN_EXPIRES, expires.toISOString());
       updateCredentials(credentialsFile, profile, Credentials);
 
       return resolve();

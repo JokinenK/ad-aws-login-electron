@@ -6,7 +6,8 @@ export enum ChannelName {
   SET_CONFIG = 'SET_CONFIG',
   GET_PROFILES = 'GET_PROFILES',
   OPEN_DIALOG = 'OPEN_DIALOG',
-  SAVE_DIALOG = 'SAVE_DIALOG'
+  SAVE_DIALOG = 'SAVE_DIALOG',
+  TOKEN_EXPIRES = 'TOKEN_EXPIRES',
 };
 
 export interface GetConfigRequest {
@@ -50,3 +51,6 @@ export type OpenDialogInvoker = RequestInvoker<OpenDialogOptions, OpenDialogRetu
 
 export type SaveDialogHandler = RequestHandler<SaveDialogOptions, SaveDialogReturnValue>;
 export type SaveDialogInvoker = RequestInvoker<SaveDialogOptions, SaveDialogReturnValue>;
+
+export type TokenExpiresHandler = RequestHandler<{}, string>;
+export type TokenExpiresInvoker = RequestInvoker<{}, string>;

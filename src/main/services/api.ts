@@ -1,6 +1,6 @@
 import { dialog, OpenDialogOptions, SaveDialogOptions } from 'electron';
 import { default as config } from '@main/config-instance';
-import { parseProfiles } from '@main/aws-helper';
+import { parseProfiles, parseTokenExpiration } from '@main/aws-helper';
 import { assignRequestHandler } from '@common/ipc';
 import {
   ConfigKey,
@@ -8,6 +8,9 @@ import {
   GetConfigHandler,
   SetConfigHandler,
   GetProfilesHandler,
+  TokenExpiresHandler,
+  OpenDialogHandler,
+  SaveDialogHandler,
 } from '@common/types'
 import { IpcPortMain } from '@main/ipc-port-main';
 
@@ -18,6 +21,7 @@ export class Api {
     assignRequestHandler(port, ChannelName.GET_PROFILES, this.getProfilesHandler);
     assignRequestHandler(port, ChannelName.OPEN_DIALOG, this.showOpenDialogHandler);
     assignRequestHandler(port, ChannelName.SAVE_DIALOG, this.showSaveDialogHandler);
+    assignRequestHandler(port, ChannelName.TOKEN_EXPIRES, this.tokenExpiresHandler);
     port.start();
   }
 
@@ -34,12 +38,19 @@ export class Api {
     return { data: parseProfiles(configPath) };
   };
 
-  showOpenDialogHandler = async(options: OpenDialogOptions) => {
+  showOpenDialogHandler: OpenDialogHandler = async(options) => {
     return dialog.showOpenDialog(options);
   }
 
-  showSaveDialogHandler = async(options: SaveDialogOptions) => {
+  showSaveDialogHandler: SaveDialogHandler = async(options) => {
     return dialog.showSaveDialog(options);
+  }
+
+  tokenExpiresHandler: TokenExpiresHandler = async(request) => {
+    const profile = config.get(ConfigKey.AWS_PROFILE);
+    const credentialsFile = config.get(ConfigKey.AWS_CREDENTIALS_PATH);
+
+    return parseTokenExpiration(credentialsFile, profile)
   }
 }
 

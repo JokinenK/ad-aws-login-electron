@@ -7,6 +7,7 @@ import {
   GetProfilesInvoker,
   OpenDialogInvoker,
   SaveDialogInvoker,
+  TokenExpiresInvoker,
 } from '@common/types'
 import { IpcPortRenderer } from '@renderer/ipc-port-renderer';
 
@@ -16,6 +17,7 @@ export class Api {
   private invokeGetProfiles: GetProfilesInvoker;
   private invokeOpenDialog: OpenDialogInvoker;
   private invokeSaveDialog: SaveDialogInvoker;
+  private invokeTokenExpires: TokenExpiresInvoker;
 
   constructor(port: IpcPortRenderer) {
     this.invokeGetConfig = createRequestInvoker(port, ChannelName.GET_CONFIG);
@@ -23,6 +25,7 @@ export class Api {
     this.invokeGetProfiles = createRequestInvoker(port, ChannelName.GET_PROFILES);
     this.invokeOpenDialog = createRequestInvoker(port, ChannelName.OPEN_DIALOG);
     this.invokeSaveDialog = createRequestInvoker(port, ChannelName.SAVE_DIALOG);
+    this.invokeTokenExpires = createRequestInvoker(port, ChannelName.TOKEN_EXPIRES);
     port.start();
   }
 
@@ -47,5 +50,9 @@ export class Api {
 
   showSaveDialog = async(options: SaveDialogOptions) => {
     return this.invokeSaveDialog(options);
+  }
+
+  tokenExpires = () => {
+    return this.invokeTokenExpires({});
   }
 }

@@ -18,7 +18,6 @@ const configInstance = new Config({
     [ConfigKey.AWS_PROFILE]: defaultProfile,
     [ConfigKey.NODE_ENV]: defaultNodeEnv,
     [ConfigKey.TOKEN_DURATION]: `${(8 * 60 * 60)}`,
-    [ConfigKey.TOKEN_EXPIRES]: moment(0).toISOString(),
   }
 });
 

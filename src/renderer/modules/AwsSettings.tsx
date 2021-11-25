@@ -35,7 +35,7 @@ export const AwsSettings = () => {
   const [
     tokenExpires,
     getTokenExpires,
-  ] = useConfig(ConfigKey.TOKEN_EXPIRES);
+  ] = usePromise(() => api.tokenExpires());
 
   React.useEffect(() => {
     getConfigPath();
