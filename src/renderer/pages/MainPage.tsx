@@ -54,7 +54,7 @@ export const MainPage = () => {
   const tokenExpiresString = moment()
     .startOf('day')
     .seconds(tokenExpiresIn)
-    .format('hh:mm:ss');
+    .format('HH:mm:ss');
 
   const onConfigPathChange = (filePaths: string[]) => {
     const file = filePaths[0];
@@ -103,9 +103,8 @@ export const MainPage = () => {
           </td>
         </tr>
         <tr className="row">
-          <td className="value" colSpan={3}>
-            Token expires in {tokenExpiresString}
-          </td>
+          <td className="key">Token expires:</td>
+          <td className="value" colSpan={2}>{tokenExpiresString}</td>
         </tr>
         <tr className="row">
           <td className="modify" colSpan={3}>
