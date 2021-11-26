@@ -19,17 +19,17 @@ div#root {
 
 tr.row {
   font-size: 16px;
+  height: 26px;
 }
 
-tr.row > td.key {
-  width: 110px;
+tr.row > td {
+  padding: 0px;
 }
 
 tr.row > td.value {
-  width: 250px;
   background-color: #424750;
   border-color: lightgray;
-  box-sizing: border-box;
+  padding-left: 4px;
 }
 
 tr.row > td.key > input,
@@ -39,7 +39,7 @@ tr.row > td.value > select,
 tr.row > td.modify > input,
 tr.row > td.modify > select {
   width: 100%;
-  margin: 2px;
   font-size: 14px;
   height: 26px;
+  box-sizing: border-box;
 }
