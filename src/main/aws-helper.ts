@@ -20,7 +20,7 @@ export const parseProfiles = (configFile: string): string[] => {
     .map(it => it.replace(extractProfilesRegExp, '$1'));
 }
 
-export const parseCredentials = (credentialsFile: string, profile: string): STS.Credentials | undefined => {
+export const parseCredentials = (credentialsFile: string, profile: string): Partial<STS.Credentials> | undefined => {
   const regExp = createExtractCredentialsRegExp(profile);
   
   if (!fs.existsSync(credentialsFile)) {
@@ -32,7 +32,7 @@ export const parseCredentials = (credentialsFile: string, profile: string): STS.
 
   if (matches) {
     const config = parseIni(matches[1]);
-    const credentials: STS.Credentials = {
+    const credentials: Partial<STS.Credentials> = {
       AccessKeyId: config['aws_access_key_id'],
       SecretAccessKey: config['aws_secret_access_key'],
       SessionToken: config['aws_session_token'],
@@ -48,7 +48,7 @@ export const parseCredentials = (credentialsFile: string, profile: string): STS.
 export const parseTokenExpiration = (credentialsFile: string, profile: string): string => {
   const credentials = parseCredentials(credentialsFile, profile);
 
-  if (credentials) {
+  if (credentials && credentials.Expiration) {
     return moment(credentials.Expiration).toISOString();
   }
 
